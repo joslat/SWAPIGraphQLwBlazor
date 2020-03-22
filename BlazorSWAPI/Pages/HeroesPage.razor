@@ -1,0 +1,30 @@
+@page "/heroes"
+@inject IStarWarsClient StarWarsClient;
+
+<h1>Our list of heroes</h1>
+<p>Sometime in a galaxy far, far away...</p>
+
+<HeroList Heroes="@_heroes" IsLoading="@_isLoading" />
+
+@code {
+  private bool _isLoading = true;
+  private ICharacterConnection? _heroes;
+
+  protected override async Task OnInitializedAsync()
+  {
+    try
+    {
+      var result = await StarWarsClient.GetCharactersAsync();
+      result.EnsureNoErrors();
+
+      _heroes = result.Data!.Characters;
+
+      _isLoading = false;
+      StateHasChanged();       
+    }
+    catch (System.Exception ex)
+    {
+        Console.WriteLine(ex.Message);
+    }
+  }
+}

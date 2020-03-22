@@ -1,0 +1,280 @@
+schema {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}
+
+type Query {
+  "Gets a character by it`s id."
+  character("The ids of the human to retrieve." ids: [Int]!): [Character!]!
+  "Gets all character."
+  characters(after: String before: String first: PaginationAmount last: PaginationAmount order_by: ICharacterSort where: ICharacterFilter): CharacterConnection
+  "Retrieve a hero by a particular Star Wars episode."
+  hero("The episode to look up by." episode: Episode!): Character!
+  reviews(after: String before: String episode: Episode! first: PaginationAmount last: PaginationAmount order_by: ReviewSort where: ReviewFilter): ReviewConnection
+  search(text: String!): [SearchResult!]!
+}
+
+type Mutation {
+  "Creates a review for a given Star Wars episode."
+  createReview(input: CreateReviewInput!): CreateReviewPayload!
+}
+
+type Subscription {
+  onReview(episode: Episode!): Review!
+}
+
+"The multiplier path scalar represents a valid GraphQL multiplier path string."
+scalar MultiplierPath
+
+"A human character in the Star Wars universe."
+type Human implements Character {
+  "The episodes the character appears in."
+  appearsIn: [Episode]!
+  "The ids of the character's friends."
+  friends(after: String before: String first: PaginationAmount last: PaginationAmount): CharacterConnection
+  "The height of the character."
+  height(unit: Unit = METERS): Float!
+  "The planet the character is originally from."
+  homePlanet: String
+  "The unique identifier for the character."
+  id: Int!
+  "The name of the character."
+  name: String!
+}
+
+"A droid in the Star Wars universe."
+type Droid implements Character {
+  "The episodes the character appears in."
+  appearsIn: [Episode]!
+  "The ids of the character's friends."
+  friends(after: String before: String first: PaginationAmount last: PaginationAmount): CharacterConnection
+  "The height of the character."
+  height(unit: Unit = METERS): Float!
+  "The unique identifier for the character."
+  id: Int!
+  "The name of the character."
+  name: String!
+  "The droid's primary function."
+  primaryFunction: String!
+}
+
+"A starship in the Star Wars universe."
+type Starship {
+  "The Id of the starship."
+  id: Int!
+  "The length of the starship."
+  length(unit: Unit = METERS): Float!
+  "The name of the starship."
+  name: String!
+}
+
+"A character in the Star Wars universe."
+interface Character {
+  "The episodes the character appears in."
+  appearsIn: [Episode]!
+  "The ids of the character's friends."
+  friends(after: String before: String first: PaginationAmount last: PaginationAmount): CharacterConnection
+  "The height of the character."
+  height(unit: Unit = METERS): Float!
+  "The unique identifier for the character."
+  id: Int!
+  "The name of the character."
+  name: String!
+}
+
+"A character in the Star Wars universe."
+input ICharacterFilter {
+  AND: [ICharacterFilter!]
+  height: Float
+  height_gt: Float
+  height_gte: Float
+  height_in: [Float!]
+  height_lt: Float
+  height_lte: Float
+  height_not: Float
+  height_not_gt: Float
+  height_not_gte: Float
+  height_not_in: [Float!]
+  height_not_lt: Float
+  height_not_lte: Float
+  id: Int
+  id_gt: Int
+  id_gte: Int
+  id_in: [Int!]
+  id_lt: Int
+  id_lte: Int
+  id_not: Int
+  id_not_gt: Int
+  id_not_gte: Int
+  id_not_in: [Int!]
+  id_not_lt: Int
+  id_not_lte: Int
+  name: String
+  name_contains: String
+  name_ends_with: String
+  name_in: [String!]
+  name_not: String
+  name_not_contains: String
+  name_not_ends_with: String
+  name_not_in: [String!]
+  name_not_starts_with: String
+  name_starts_with: String
+  OR: [ICharacterFilter!]
+}
+
+"A character in the Star Wars universe."
+input ICharacterSort {
+  height: SortOperationKind
+  id: SortOperationKind
+  name: SortOperationKind
+}
+
+scalar PaginationAmount
+
+"A connection to a list of items."
+type CharacterConnection {
+  "A list of edges."
+  edges: [CharacterEdge!]
+  "A flattened list of the nodes."
+  nodes: [Character]
+  "Information to aid in pagination."
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+"A connection to a list of items."
+type ReviewConnection {
+  "A list of edges."
+  edges: [ReviewEdge!]
+  "A flattened list of the nodes."
+  nodes: [Review]
+  "Information to aid in pagination."
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+"A review of a particular movie."
+type Review {
+  "An explanation for the rating."
+  commentary: String!
+  id: Uuid!
+  "The number of stars given for this review."
+  stars: Int!
+}
+
+"A review of a particular movie."
+input ReviewFilter {
+  AND: [ReviewFilter!]
+  commentary: String
+  commentary_contains: String
+  commentary_ends_with: String
+  commentary_in: [String!]
+  commentary_not: String
+  commentary_not_contains: String
+  commentary_not_ends_with: String
+  commentary_not_in: [String!]
+  commentary_not_starts_with: String
+  commentary_starts_with: String
+  id: Uuid
+  id_gt: Uuid
+  id_gte: Uuid
+  id_in: [Uuid!]
+  id_lt: Uuid
+  id_lte: Uuid
+  id_not: Uuid
+  id_not_gt: Uuid
+  id_not_gte: Uuid
+  id_not_in: [Uuid!]
+  id_not_lt: Uuid
+  id_not_lte: Uuid
+  OR: [ReviewFilter!]
+  stars: Int
+  stars_gt: Int
+  stars_gte: Int
+  stars_in: [Int!]
+  stars_lt: Int
+  stars_lte: Int
+  stars_not: Int
+  stars_not_gt: Int
+  stars_not_gte: Int
+  stars_not_in: [Int!]
+  stars_not_lt: Int
+  stars_not_lte: Int
+}
+
+"A review of a particular movie."
+input ReviewSort {
+  commentary: SortOperationKind
+  id: SortOperationKind
+  stars: SortOperationKind
+}
+
+"Different units of measurement."
+enum Unit {
+  FOOT
+  METERS
+}
+
+enum SortOperationKind {
+  ASC
+  DESC
+}
+
+"Information about pagination in a connection."
+type PageInfo {
+  "When paginating forwards, the cursor to continue."
+  endCursor: String
+  "Indicates whether more edges exist following the set defined by the clients arguments."
+  hasNextPage: Boolean!
+  "Indicates whether more edges exist prior the set defined by the clients arguments."
+  hasPreviousPage: Boolean!
+  "When paginating backwards, the cursor to continue."
+  startCursor: String
+}
+
+"An edge in a connection."
+type CharacterEdge {
+  "A cursor for use in pagination."
+  cursor: String!
+  "The item at the end of the edge."
+  node: Character
+}
+
+"An edge in a connection."
+type ReviewEdge {
+  "A cursor for use in pagination."
+  cursor: String!
+  "The item at the end of the edge."
+  node: Review
+}
+
+"The Star Wars episodes."
+enum Episode {
+  "Star Wars Episode IV: A New Hope"
+  NEWHOPE
+  "Star Wars Episode V: Empire Strikes Back"
+  EMPIRE
+  "Star Wars Episode VI: Return of the Jedi"
+  JEDI
+}
+
+union SearchResult = Human | Droid | Starship
+
+type CreateReviewPayload {
+  episode: Episode!
+  review: Review!
+}
+
+input CreateReviewInput {
+  "An explanation for the rating."
+  commentary: String!
+  episode: Episode!
+  "The number of stars given for this review."
+  stars: Int!
+}
+
+scalar Uuid
+
+"The cost directives is used to express the complexity of a field."
+directive @cost("Defines the complexity of the field." complexity: Int! = 1 "Defines field arguments that act as complexity multipliers." multipliers: [MultiplierPath!]) on FIELD_DEFINITION
